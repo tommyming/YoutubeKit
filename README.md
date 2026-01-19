@@ -9,6 +9,7 @@
 - 🔒 **Privacy First**: Includes a `PrivacyInfo.xcprivacy` manifest.
 - 🛠 **System-Level Feel**: Strictly typed API with no loose strings or untyped dictionaries in the public interface.
 - 📦 **Zero Assets**: No bundled HTML/CSS files to avoid CORS or file-loading issues.
+- 🎨 **SwiftUI & UIKit**: First-class support for both UI frameworks.
 
 ## Requirements
 
@@ -47,6 +48,8 @@ class ViewModel: ObservableObject {
 
 ### 2. Add the View
 
+#### SwiftUI
+
 Use `YouTubePlayerView` in your SwiftUI hierarchy.
 
 ```swift
@@ -70,6 +73,53 @@ struct ContentView: View {
                     Task { await viewModel.player.pause() }
                 }
             }
+        }
+    }
+}
+```
+
+#### UIKit
+
+Use `YouTubePlayerUIView` in your View Controllers.
+
+```swift
+import UIKit
+import YouTubeKit
+import Combine // Or RxSwift
+
+class ViewController: UIViewController {
+    
+    // 1. Create the view (it initializes its own player by default)
+    let playerView = YouTubePlayerUIView()
+    private var cancellables = Set<AnyCancellable>()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // 2. Add to hierarchy
+        view.addSubview(playerView)
+        playerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            playerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 9/16)
+        ])
+        
+        // 3. Load Video
+        playerView.player.load(videoId: "dQw4w9WgXcQ")
+        
+        // 4. Observe State (Optional)
+        playerView.player.$state
+            .sink { state in
+                print("Player State: \(state)")
+            }
+            .store(in: &cancellables)
+    }
+    
+    func playVideo() {
+        Task {
+            await playerView.player.play()
         }
     }
 }
@@ -122,4 +172,4 @@ YouTubeKit treats the `WKWebView` as an internal engine. It injects a static HTM
 
 ## License
 
-This library is released under the Apache 2.0 License.
+This library is released under the MIT License.
