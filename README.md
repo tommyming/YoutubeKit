@@ -122,4 +122,4 @@ YouTubeKit treats the `WKWebView` as an internal engine. It injects a static HTM
 
 ## License
 
-This library is released under the MIT License.
+This library is released under the Apache 2.0 License.
