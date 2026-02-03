@@ -15,7 +15,15 @@ public class YouTubePlayer: NSObject, ObservableObject {
 
     public override init() {
         let configuration = WKWebViewConfiguration()
+
+        // Fix for YouTube error 152: Ensure proper Referer headers
+        configuration.websiteDataStore = .default()
         configuration.allowsInlineMediaPlayback = true
+
+        // Set proper application name for user agent
+        let applicationName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "YouTubeKit"
+        let userAgent = "YouTubeKit/1.0 (\(applicationName)) Mobile/15E148 Safari/604.1"
+        configuration.applicationNameForUserAgent = applicationName
 
         let userContentController = WKUserContentController()
         configuration.userContentController = userContentController
@@ -24,6 +32,7 @@ public class YouTubePlayer: NSObject, ObservableObject {
         self.webView.backgroundColor = .black
         self.webView.isOpaque = false
         self.webView.scrollView.isScrollEnabled = false
+        self.webView.customUserAgent = userAgent
 
         super.init()
 

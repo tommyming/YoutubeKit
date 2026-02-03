@@ -7,6 +7,7 @@ internal struct HTMLTemplate {
             <html>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                <meta name="referrer" content="strict-origin-when-cross-origin">
                 <style>
                     body { margin: 0; padding: 0; background-color: black; }
                     #player { width: 100%; height: 100%; position: absolute; }
@@ -22,12 +23,22 @@ internal struct HTMLTemplate {
 
                     var player;
                     function onYouTubeIframeAPIReady() {
+                        // Fix for YouTube error 152: Use dynamic origin
+                        var origin = window.location.origin;
+                        if (!origin) {
+                            // Fallback for cases where window.location.origin is not available
+                            origin = 'https://www.youtube.com';
+                        }
+
                         player = new YT.Player('player', {
                             height: '100%',
                             width: '100%',
                             videoId: '\(videoId)',
                             playerVars: {
-                                'playsinline': 1
+                                'playsinline': 1,
+                                'origin': origin,
+                                'rel': 0,
+                                'modestbranding': 1
                             },
                             events: {
                                 'onReady': onReady,
