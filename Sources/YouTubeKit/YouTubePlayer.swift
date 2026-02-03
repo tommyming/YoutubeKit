@@ -49,10 +49,19 @@ public class YouTubePlayer: NSObject, ObservableObject {
     // MARK: - Public Methods
 
     public func load(videoId: String) {
-        let html = HTMLTemplate.generate(videoId: videoId)
-        // baseURL is critical for the iframe API to work correctly and avoid cross-origin issues
-        let baseURL = URL(string: "https://www.youtube.com")
-        webView.loadHTMLString(html, baseURL: baseURL)
+        // Validate and sanitize the video ID
+        do {
+            let validatedVideoId = try VideoId.validateAndSanitize(videoId)
+            let html = HTMLTemplate.generate(videoId: validatedVideoId.value)
+            // baseURL is critical for the iframe API to work correctly and avoid cross-origin issues
+            let baseURL = URL(string: "https://www.youtube.com")
+            webView.loadHTMLString(html, baseURL: baseURL)
+        } catch {
+            // Log the validation error but don't crash
+            print("YouTubeKit Error: Invalid video ID '\(videoId)' - \(error)")
+            // Reset state to indicate invalid input
+            state = .unstarted
+        }
     }
 
     public func play() async {
