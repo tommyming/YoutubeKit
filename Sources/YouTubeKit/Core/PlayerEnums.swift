@@ -71,6 +71,11 @@ public struct VideoId: Sendable {
             throw PlayerError.videoNotFound  // Invalid format
         }
 
-        return VideoId(sanitized)
+        // Force unwrap is safe here because we've already validated the format above
+        guard let validVideoId = VideoId(sanitized) else {
+            throw PlayerError.invalidVideoId
+        }
+
+        return validVideoId
     }
 }

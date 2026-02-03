@@ -27,8 +27,7 @@ internal struct HTMLTemplate {
                             width: '100%',
                             videoId: '\(videoId)',
                             playerVars: {
-                                'playsinline': 1,
-                                'origin': 'https://www.youtube.com'
+                                'playsinline': 1
                             },
                             events: {
                                 'onReady': onReady,

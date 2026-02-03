@@ -104,8 +104,8 @@ extension YouTubePlayer: WKScriptMessageHandler {
 
         switch eventName {
         case "onReady":
-            // Player is ready
-            break
+            // Player is ready and cued
+            self.state = .cued
 
         case "onStateChange":
             if let data = body["data"] as? Int,
